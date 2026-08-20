@@ -49,11 +49,11 @@ class TestUtils:
 
     def test_config_load_env(self):
         from utils import BioNOVAConfig
-        os.environ["BIONOVA_MAX_RESULTS"] = "50"
+        os.environ["MAX_RESULTS"] = "50"
         cfg = BioNOVAConfig.load_env()
         assert isinstance(cfg, BioNOVAConfig)
-        # max_results may or may not pick up env depending on implementation
-        assert cfg.max_results >= 1
+        assert cfg.max_results == 50
+        del os.environ["MAX_RESULTS"]
 
     def test_normalize_text(self):
         from utils import normalize_text
