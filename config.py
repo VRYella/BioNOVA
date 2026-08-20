@@ -30,12 +30,6 @@ DB_PATH = str(DATABASE_DIR / "biolita.db")
 ENTREZ_EMAIL = os.getenv("ENTREZ_EMAIL")
 ENTREZ_API_KEY = os.getenv("ENTREZ_API_KEY")
 
-if not ENTREZ_EMAIL:
-    raise EnvironmentError(
-        "ENTREZ_EMAIL not found in .env file. "
-        "Please add ENTREZ_EMAIL=your_email@example.com to your .env file."
-    )
-
 # ── Query / retrieval limits ──────────────────────────────────────────────────
 MAX_RESULTS_DEFAULT = 300
 MAX_RESULTS_MIN = 100
