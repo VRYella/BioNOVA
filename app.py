@@ -367,7 +367,7 @@ def _render_discover_page() -> None:
 
     run = st.button("Explore Literature", type="primary", use_container_width=True)
 
-    _render_pipeline_progress(4 if st.session_state.get("pipeline_ran") else 0, "Ready")
+    _render_pipeline_progress(5 if st.session_state.get("pipeline_ran") else 0, "Ready")
 
     quick_cols = st.columns(4)
     quick_cards = [
@@ -544,7 +544,7 @@ def _run_pipeline(
         }
         st.session_state["pipeline_ran"] = True
 
-        _set_step(4, "Pipeline complete.", 1.0)
+        _set_step(5, "Pipeline complete.", 1.0)
         status.success(
             f"Pipeline complete — {len(articles)} papers, {len(relations)} relations, and {len(gap_candidates)} candidate gaps ready for review."
         )

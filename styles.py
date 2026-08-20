@@ -463,6 +463,20 @@ def _theme_css(dark: bool = False) -> str:
 
         .badge-row {{ display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }}
 
+        .evidence-pill {{
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 4px 10px;
+            margin: 2px 6px 4px 0;
+            font-size: {t.size_xs}px;
+            font-weight: {t.weight_semibold};
+            color: var(--primary);
+            background: rgba(23, 105, 170, 0.10);
+            border: 1px solid rgba(23, 105, 170, 0.20);
+        }}
+
         .soft-badge {{
             display: inline-flex;
             align-items: center;
