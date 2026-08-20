@@ -84,6 +84,7 @@ _DEFAULTS: Dict[str, Any] = {
     "pipeline_running": False,
     "analysis_metadata": {},
     "dark_mode": False,
+    "search_use_year_filter": False,
     "search_min_year": 2000,
     "search_max_year": 2026,
     "search_max_results": 100,
@@ -333,6 +334,7 @@ def _render_discover_page() -> None:
     )
 
     with st.expander("Search Parameters", expanded=not st.session_state.get("pipeline_ran")):
+        st.checkbox("Apply publication year filter", value=bool(st.session_state.get("search_use_year_filter", False)), key="search_use_year_filter")
         col1, col2, col3 = st.columns([1, 1, 1.2])
         with col1:
             st.number_input(
@@ -389,7 +391,7 @@ def _render_discover_page() -> None:
 
     if run:
         q = query.strip()
-        if st.session_state.get("search_min_year") and st.session_state.get("search_max_year"):
+        if st.session_state.get("search_use_year_filter") and st.session_state.get("search_min_year") and st.session_state.get("search_max_year"):
             if int(st.session_state["search_min_year"]) > int(st.session_state["search_max_year"]):
                 st.warning("Min year cannot be greater than max year.")
                 return
@@ -399,7 +401,11 @@ def _render_discover_page() -> None:
         _run_pipeline(
             query=q,
             max_results=int(st.session_state.get("search_max_results", 100)),
-            cutoff_year=int(st.session_state.get("search_max_year")) if st.session_state.get("search_max_year") else None,
+            cutoff_year=(
+                int(st.session_state.get("search_max_year"))
+                if st.session_state.get("search_use_year_filter") and st.session_state.get("search_max_year")
+                else None
+            ),
             use_demo=bool(st.session_state.get("use_demo")),
             cfg=cfg,
         )
@@ -411,7 +417,7 @@ def _render_discover_page() -> None:
             ("Papers", meta.get("n_articles", 0), "Retrieved corpus"),
             ("Entities", meta.get("n_entities", 0), "Extracted mentions"),
             ("Relations", meta.get("n_relations", 0), "Structured claims"),
-            ("Evidence Claims", meta.get("n_relations", 0), "Evidence-ready assertions"),
+            ("Evidence Claims", meta.get("n_evidence_claims", 0), "Sentence-level evidence"),
             ("Years Covered", meta.get("years_covered", "N/A"), "Publication span"),
         ]
         for col, (label, value, detail) in zip(metrics, metric_values):
@@ -498,7 +504,7 @@ def _run_pipeline(
             return
 
         min_year = st.session_state.get("search_min_year")
-        if min_year:
+        if st.session_state.get("search_use_year_filter") and min_year:
             articles = [a for a in articles if a.year is None or a.year >= int(min_year)]
         if cutoff_year:
             articles = [a for a in articles if a.year is None or a.year <= cutoff_year]
@@ -527,6 +533,7 @@ def _run_pipeline(
             "n_articles": len(articles),
             "n_entities": len(entities),
             "n_relations": len(relations),
+            "n_evidence_claims": sum(1 for relation in relations if getattr(relation, "sentence", "")),
             "n_nodes": stats.get("n_nodes", 0),
             "n_edges": stats.get("n_edges", 0),
             "n_biological_edges": stats.get("n_biological_edges", 0),

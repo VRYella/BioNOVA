@@ -551,20 +551,20 @@ def get_score_bar_html(label: str, score: float, show_level: bool = True) -> str
     color = "#2E8B57" if score >= 0.7 else "#D99000" if score >= 0.4 else "#C73E3A"
     level_html = f'<span style="font-size:11px;color:{color};font-weight:600;">{level}</span>' if show_level else ""
     return f'''<div style="margin:6px 0;">
-        <span style="font-size:12px;color:#53657A;">{escape_html(label)}</span><br>
-        <span style="font-family:monospace;color:#1769AA;letter-spacing:1px;">{bar}</span>
-        <span style="font-size:13px;color:#14213D;margin-left:8px;">{score:.2f}</span>
+        <span style="font-size:12px;color:var(--text-secondary);">{escape_html(label)}</span><br>
+        <span style="font-family:monospace;color:var(--primary);letter-spacing:1px;">{bar}</span>
+        <span style="font-size:13px;color:var(--text-primary);margin-left:8px;">{score:.2f}</span>
         {level_html}
     </div>'''
 
 
 def get_empty_state_html(icon: str, title: str, message: str, action: str = "") -> str:
-    action_html = f'<div style="margin-top:12px;font-size:13px;color:#1769AA;">{escape_html(action)}</div>' if action else ""
-    return f'''<div style="text-align:center;padding:48px 24px;background:#F0F4F8;
-               border-radius:12px;border:1px dashed #E5E7EB;">
+    action_html = f'<div style="margin-top:12px;font-size:13px;color:var(--primary);">{escape_html(action)}</div>' if action else ""
+    return f'''<div style="text-align:center;padding:48px 24px;background:var(--bg-tertiary);
+               border-radius:12px;border:1px dashed var(--border);">
         <div style="font-size:32px;margin-bottom:12px;opacity:0.6;">{escape_html(icon)}</div>
-        <div style="font-size:18px;font-weight:600;color:#14213D;margin-bottom:8px;">{escape_html(title)}</div>
-        <div style="font-size:13px;color:#53657A;max-width:400px;margin:0 auto;">{escape_html(message)}</div>
+        <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">{escape_html(title)}</div>
+        <div style="font-size:13px;color:var(--text-secondary);max-width:400px;margin:0 auto;">{escape_html(message)}</div>
         {action_html}
     </div>'''
 
@@ -586,19 +586,19 @@ def get_evidence_card_html(subject, predicate, obj, sentence, pmid, year, confid
     year_str = str(year) if year else "N/A"
     pmid_str = str(pmid) if pmid else "N/A"
     polarity_html = get_polarity_badge_html(str(polarity or "uncertain"))
-    return f'''<div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;padding:14px 18px;margin:8px 0;transition:box-shadow 0.15s;">
+    return f'''<div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin:8px 0;transition:box-shadow 0.15s;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;justify-content:space-between;">
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <span style="font-weight:600;color:#14213D;">{escape_html(str(subject or 'N/A'))}</span>
+                <span style="font-weight:600;color:var(--text-primary);">{escape_html(str(subject or 'N/A'))}</span>
                 <span style="color:#0F8B8D;font-size:12px;background:rgba(15,139,141,0.1);padding:2px 8px;border-radius:4px;">{escape_html(str(predicate or 'related_to'))}</span>
-                <span style="font-weight:600;color:#14213D;">{escape_html(str(obj or 'N/A'))}</span>
+                <span style="font-weight:600;color:var(--text-primary);">{escape_html(str(obj or 'N/A'))}</span>
             </div>
             {polarity_html}
         </div>
-        <div style="font-size:13px;color:#53657A;margin-bottom:10px;line-height:1.6;">{escape_html(str(sentence or 'No evidence sentence available.'))}</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:10px;line-height:1.6;">{escape_html(str(sentence or 'No evidence sentence available.'))}</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
             <span style="font-size:11px;background:rgba(23,105,170,0.1);color:#1769AA;padding:2px 8px;border-radius:999px;">PMID {escape_html(pmid_str)}</span>
-            <span style="font-size:11px;color:#53657A;">{escape_html(year_str)}</span>
-            <span style="font-size:11px;color:#53657A;">Confidence: {escape_html(conf_str)}</span>
+            <span style="font-size:11px;color:var(--text-secondary);">{escape_html(year_str)}</span>
+            <span style="font-size:11px;color:var(--text-secondary);">Confidence: {escape_html(conf_str)}</span>
         </div>
     </div>'''
