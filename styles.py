@@ -3,55 +3,60 @@
 # ────────────────────────────────────────────────────────────────────────────────────
 
 from dataclasses import dataclass
-from typing import Literal
+from typing import Optional
+
+from utils import escape_html
+
 
 # ── PALETTE: Scientific, restrained, WCAG-accessible colors ──
 @dataclass
 class ColorPalette:
     """Primary color system. All values WCAG-AA compliant."""
-    bg_primary: str = "#F6F8FB"  # Very light neutral/blue-gray
-    bg_secondary: str = "#FFFFFF"  # Surface
-    bg_tertiary: str = "#F0F4F8"  # Surface alternative
-    bg_dark: str = "#0A0F1E"  # Dark mode primary
-    bg_dark_secondary: str = "#111827"  # Dark surface
-    
-    text_primary: str = "#14213D"  # Deep navy
-    text_secondary: str = "#53657A"  # Muted blue-gray
-    text_light: str = "#F9FAFB"  # Light for dark mode
-    
-    primary: str = "#1769AA"  # Deep scientific blue
-    primary_dark: str = "#0D3B66"  # Darker scientific blue
-    primary_light: str = "#3B82F6"  # Lighter scientific blue
-    
-    secondary: str = "#0F8B8D"  # Teal
-    secondary_light: str = "#14B8A6"  # Light teal
-    
-    accent: str = "#6C63FF"  # Violet for AI/discovery
-    accent_light: str = "#A78BFA"  # Light violet
-    
-    success: str = "#2E8B57"  # Scientific green
-    success_light: str = "#10B981"  # Light green
-    
-    warning: str = "#D99000"  # Amber
-    warning_light: str = "#F59E0B"  # Light amber
-    
-    danger: str = "#C73E3A"  # Red
-    danger_light: str = "#EF4444"  # Light red
-    
-    border: str = "#E5E7EB"  # Light gray border
-    border_dark: str = "#2D3A52"  # Dark mode border
-    
-    muted: str = "#9CA3AF"  # Muted gray
-    
+
+    bg_primary: str = "#F6F8FB"
+    bg_secondary: str = "#FFFFFF"
+    bg_tertiary: str = "#F0F4F8"
+    bg_dark: str = "#0A0F1E"
+    bg_dark_secondary: str = "#111827"
+
+    text_primary: str = "#14213D"
+    text_secondary: str = "#53657A"
+    text_light: str = "#F9FAFB"
+
+    primary: str = "#1769AA"
+    primary_dark: str = "#0D3B66"
+    primary_light: str = "#3B82F6"
+
+    secondary: str = "#0F8B8D"
+    secondary_light: str = "#14B8A6"
+
+    accent: str = "#6C63FF"
+    accent_light: str = "#A78BFA"
+
+    success: str = "#2E8B57"
+    success_light: str = "#10B981"
+
+    warning: str = "#D99000"
+    warning_light: str = "#F59E0B"
+
+    danger: str = "#C73E3A"
+    danger_light: str = "#EF4444"
+
+    border: str = "#E5E7EB"
+    border_dark: str = "#2D3A52"
+
+    muted: str = "#9CA3AF"
+
+
 light_palette = ColorPalette()
+
 
 # ── TYPOGRAPHY ──
 @dataclass
 class Typography:
     """Type hierarchy. Modern professional sans-serif (Inter preferred)."""
+
     font_family: str = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-    
-    # Sizes (px)
     size_xs: int = 12
     size_sm: int = 13
     size_base: int = 14
@@ -61,24 +66,23 @@ class Typography:
     size_2xl: int = 28
     size_3xl: int = 32
     size_4xl: int = 36
-    
-    # Weights
     weight_normal: int = 400
     weight_medium: int = 500
     weight_semibold: int = 600
     weight_bold: int = 700
-    
-    # Line heights
-    line_height_tight: float = 1.4
+    line_height_tight: float = 1.25
     line_height_normal: float = 1.6
     line_height_relaxed: float = 1.8
 
+
 typography = Typography()
+
 
 # ── SPACING ──
 @dataclass
 class Spacing:
     """Modular spacing scale."""
+
     xs: int = 4
     sm: int = 8
     md: int = 12
@@ -87,381 +91,528 @@ class Spacing:
     xxl: int = 32
     xxxl: int = 48
 
+
 spacing = Spacing()
+
 
 # ── COMPONENT TOKENS ──
 @dataclass
 class ComponentTokens:
     """Reusable component styling constants."""
-    # Borders
+
     border_width: str = "1px"
     border_radius_sm: str = "6px"
     border_radius_md: str = "8px"
     border_radius_lg: str = "12px"
-    
-    # Shadows (subtle)
-    shadow_sm: str = "0 1px 2px rgba(0, 0, 0, 0.05)"
-    shadow_md: str = "0 4px 6px rgba(0, 0, 0, 0.07)"
-    shadow_lg: str = "0 10px 15px rgba(0, 0, 0, 0.1)"
-    
-    # Transitions
+    shadow_sm: str = "0 1px 2px rgba(15, 23, 42, 0.06)"
+    shadow_md: str = "0 8px 24px rgba(15, 23, 42, 0.08)"
+    shadow_lg: str = "0 18px 38px rgba(15, 23, 42, 0.12)"
     transition_fast: str = "all 0.15s cubic-bezier(0.4, 0, 0.2, 1)"
     transition_normal: str = "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-    
-    # Button sizes
     button_height_sm: str = "32px"
     button_height_md: str = "40px"
     button_height_lg: str = "48px"
-    
-    # Input sizes
     input_height: str = "40px"
     input_padding: str = "10px 14px"
 
+
 components = ComponentTokens()
 
-def get_light_theme_css() -> str:
-    """Generate complete light-mode CSS."""
+
+def _theme_css(dark: bool = False) -> str:
     p = light_palette
     t = typography
     s = spacing
     c = components
-    
+
+    if dark:
+        bg_primary = p.bg_dark
+        bg_secondary = p.bg_dark_secondary
+        bg_tertiary = "#1F2937"
+        text_primary = p.text_light
+        text_secondary = "#AAB6C8"
+        primary = p.primary_light
+        secondary = p.secondary_light
+        accent = p.accent_light
+        success = p.success
+        warning = p.warning_light
+        danger = p.danger_light
+        border = p.border_dark
+        muted = "#6B7280"
+        brand_gradient = "linear-gradient(135deg, #60A5FA, #A78BFA)"
+        card_shadow = "0 16px 32px rgba(0, 0, 0, 0.22)"
+    else:
+        bg_primary = p.bg_primary
+        bg_secondary = p.bg_secondary
+        bg_tertiary = p.bg_tertiary
+        text_primary = p.text_primary
+        text_secondary = p.text_secondary
+        primary = p.primary
+        secondary = p.secondary
+        accent = p.accent
+        success = p.success
+        warning = p.warning
+        danger = p.danger
+        border = p.border
+        muted = p.muted
+        brand_gradient = "linear-gradient(135deg, #1769AA, #6C63FF)"
+        card_shadow = c.shadow_md
+
     return f"""
     <style>
         :root {{
-            --bg-primary: {p.bg_primary};
-            --bg-secondary: {p.bg_secondary};
-            --bg-tertiary: {p.bg_tertiary};
-            --text-primary: {p.text_primary};
-            --text-secondary: {p.text_secondary};
-            --primary: {p.primary};
+            --bg-primary: {bg_primary};
+            --bg-secondary: {bg_secondary};
+            --bg-tertiary: {bg_tertiary};
+            --text-primary: {text_primary};
+            --text-secondary: {text_secondary};
+            --primary: {primary};
             --primary-dark: {p.primary_dark};
-            --secondary: {p.secondary};
-            --accent: {p.accent};
-            --success: {p.success_light};
-            --warning: {p.warning_light};
-            --danger: {p.danger_light};
-            --border: {p.border};
-            --muted: {p.muted};
+            --secondary: {secondary};
+            --accent: {accent};
+            --success: {success};
+            --warning: {warning};
+            --danger: {danger};
+            --border: {border};
+            --muted: {muted};
             --font-family: {t.font_family};
-            --size-base: {t.size_base}px;
+            --radius-sm: {c.border_radius_sm};
             --radius-md: {c.border_radius_md};
-            --shadow-md: {c.shadow_md};
+            --radius-lg: {c.border_radius_lg};
+            --shadow-sm: {c.shadow_sm};
+            --shadow-md: {card_shadow};
+            --shadow-lg: {c.shadow_lg};
         }}
-        
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        
+
+        * {{ box-sizing: border-box; }}
+
         body, .stApp {{
             font-family: var(--font-family);
-            background-color: var(--bg-primary);
+            background: var(--bg-primary);
             color: var(--text-primary);
-            font-size: var(--size-base);
+            font-size: {t.size_base}px;
             line-height: {t.line_height_normal};
         }}
-        
-        .block-container {{ padding-top: {s.lg}px; padding-bottom: {s.xl}px; max-width: 1600px; }}
-        
-        /* Headings */
-        h1, .h1 {{
-            font-size: {t.size_3xl}px;
-            font-weight: {t.weight_bold};
-            line-height: {t.line_height_tight};
-            color: var(--text-primary);
-            margin-bottom: {s.lg}px;
+
+        .block-container {{
+            padding-top: {s.lg}px;
+            padding-bottom: {s.xxl}px;
+            max-width: 1600px;
         }}
-        
-        h2, .h2 {{
-            font-size: {t.size_2xl}px;
-            font-weight: {t.weight_bold};
-            line-height: {t.line_height_tight};
-            color: var(--text-primary);
-            margin-bottom: {s.md}px;
-        }}
-        
-        h3, .h3 {{
-            font-size: {t.size_lg}px;
-            font-weight: {t.weight_semibold};
-            line-height: {t.line_height_normal};
-            color: var(--text-primary);
-            margin-bottom: {s.sm}px;
-        }}
-        
-        /* Buttons */
+
+        h1, h2, h3, h4 {{ color: var(--text-primary); }}
+        p, li, label {{ color: var(--text-primary); }}
+
+        .stMarkdown p {{ line-height: {t.line_height_normal}; }}
+
         .stButton > button {{
             font-family: var(--font-family);
             font-weight: {t.weight_semibold};
             border-radius: {c.border_radius_md};
-            border: none;
-            height: {c.button_height_md};
+            border: 1px solid transparent;
+            min-height: {c.button_height_md};
             transition: {c.transition_fast};
-            text-transform: none;
-            letter-spacing: 0;
+            box-shadow: none;
         }}
-        
+
         .stButton > button[kind="primary"] {{
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            box-shadow: 0 2px 8px rgba(23, 105, 170, 0.2);
         }}
-        
+
         .stButton > button[kind="primary"]:hover {{
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(23, 105, 170, 0.3);
+            box-shadow: 0 10px 20px rgba(23, 105, 170, 0.18);
         }}
-        
+
         .stButton > button[kind="secondary"] {{
-            background: var(--bg-tertiary);
+            background: var(--bg-secondary);
             color: var(--text-primary);
-            border: 1px solid var(--border);
+            border-color: var(--border);
         }}
-        
-        /* Inputs */
-        .stTextInput > div > div > input,
-        .stTextArea > div > div > textarea,
-        .stSelectbox > div > div > div > input {{
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-            border-radius: {c.border_radius_md};
-            font-family: var(--font-family);
-            font-size: {t.size_base}px;
-            padding: {c.input_padding};
-            transition: {c.transition_fast};
+
+        .stTextInput input,
+        .stTextArea textarea,
+        .stSelectbox [data-baseweb="select"],
+        .stNumberInput input {{
+            background: var(--bg-secondary) !important;
+            color: var(--text-primary) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: {c.border_radius_md} !important;
         }}
-        
-        .stTextInput > div > div > input:focus,
-        .stTextArea > div > div > textarea:focus {{
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.1);
+
+        .stTextArea textarea {{ min-height: 120px; }}
+
+        .stTextInput input:focus,
+        .stTextArea textarea:focus,
+        .stNumberInput input:focus {{
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.12) !important;
         }}
-        
-        /* Sidebar */
+
         section[data-testid="stSidebar"] {{
-            background-color: var(--bg-secondary);
+            background: var(--bg-secondary);
             border-right: 1px solid var(--border);
         }}
-        
-        section[data-testid="stSidebar"] .stRadio > div {{
-            gap: {s.sm}px;
+
+        section[data-testid="stSidebar"] .block-container {{
+            padding-top: {s.lg}px;
+            padding-bottom: {s.lg}px;
         }}
-        
-        section[data-testid="stSidebar"] .stRadio label {{
-            font-weight: {t.weight_medium};
+
+        section[data-testid="stSidebar"] .stRadio > div {{ gap: {s.sm}px; }}
+        section[data-testid="stSidebar"] .stRadio label {{ width: 100%; }}
+        section[data-testid="stSidebar"] .stRadio [role="radiogroup"] label {{
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: {c.border_radius_md};
+            padding: 10px 12px;
+            transition: {c.transition_fast};
             color: var(--text-primary);
+            margin-bottom: 6px;
         }}
-        
-        /* Cards & Containers */
-        .metric-card {{
+
+        section[data-testid="stSidebar"] .stRadio [role="radiogroup"] label:hover {{
+            background: var(--bg-tertiary);
+            border-color: var(--border);
+        }}
+
+        section[data-testid="stSidebar"] .stRadio [role="radiogroup"] label:has(input:checked) {{
+            background: linear-gradient(135deg, rgba(23, 105, 170, 0.10), rgba(108, 99, 255, 0.08));
+            border-color: rgba(23, 105, 170, 0.25);
+            box-shadow: inset 0 0 0 1px rgba(23, 105, 170, 0.08);
+        }}
+
+        .sidebar-brand {{
+            padding: 18px 18px 16px 18px;
+            border: 1px solid var(--border);
+            border-radius: {c.border_radius_lg};
+            background: linear-gradient(180deg, var(--bg-secondary), var(--bg-tertiary));
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
+        }}
+
+        .sidebar-brand-title {{
+            font-size: {t.size_xl}px;
+            font-weight: {t.weight_bold};
+            background: {brand_gradient};
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }}
+
+        .sidebar-brand-subtitle {{
+            font-size: {t.size_sm}px;
+            color: var(--text-secondary);
+            line-height: {t.line_height_normal};
+        }}
+
+        .page-header {{
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            border: 1px solid var(--border);
+            border-radius: {c.border_radius_lg};
+            padding: 22px 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }}
+
+        .page-header-title {{
+            font-size: {t.size_2xl}px;
+            font-weight: {t.weight_bold};
+            color: var(--text-primary);
+            letter-spacing: 0.01em;
+            margin-bottom: 4px;
+        }}
+
+        .page-header-subtitle {{
+            color: var(--text-secondary);
+            font-size: {t.size_sm}px;
+            max-width: 900px;
+        }}
+
+        .page-header-corpus {{
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            background: rgba(23, 105, 170, 0.08);
+            color: var(--primary);
+            border: 1px solid rgba(23, 105, 170, 0.14);
+            border-radius: 999px;
+            padding: 5px 12px;
+            font-size: {t.size_xs}px;
+            font-weight: {t.weight_semibold};
+        }}
+
+        .metric-card, .quick-card, .evidence-card, .gap-card, .hypothesis-card {{
             background: var(--bg-secondary);
             border: 1px solid var(--border);
             border-radius: {c.border_radius_lg};
-            padding: {s.lg}px;
-            box-shadow: {c.shadow_sm};
+            box-shadow: var(--shadow-sm);
+        }}
+
+        .metric-card {{ padding: 16px 18px; }}
+        .metric-card-label {{ color: var(--text-secondary); font-size: {t.size_xs}px; text-transform: uppercase; letter-spacing: 0.08em; }}
+        .metric-card-value {{ color: var(--text-primary); font-size: {t.size_xl}px; font-weight: {t.weight_bold}; margin-top: 6px; }}
+
+        .quick-card {{
+            padding: 16px 18px;
+            min-height: 148px;
             transition: {c.transition_fast};
         }}
-        
-        .metric-card:hover {{
-            box-shadow: {c.shadow_md};
+
+        .quick-card:hover,
+        .evidence-card:hover,
+        .gap-card:hover,
+        .hypothesis-card:hover {{
             transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }}
-        
-        .score-indicator {{
-            display: inline-flex;
-            align-items: center;
-            gap: {s.sm}px;
-            padding: {s.xs}px {s.md}px;
-            background: var(--bg-tertiary);
-            border-radius: 999px;
-            font-size: {t.size_sm}px;
+
+        .quick-card-kicker {{
+            font-size: {t.size_xs}px;
+            color: var(--primary);
+            font-weight: {t.weight_semibold};
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }}
+
+        .quick-card-title {{
+            font-size: {t.size_lg}px;
             font-weight: {t.weight_semibold};
             color: var(--text-primary);
-            border: 1px solid var(--border);
+            margin-bottom: 8px;
         }}
-        
-        .score-high {{ color: var(--success); border-color: var(--success); }}
-        .score-medium {{ color: var(--warning); border-color: var(--warning); }}
-        .score-low {{ color: var(--danger); border-color: var(--danger); }}
-        
-        /* Evidence & Pills */
-        .evidence-pill {{
-            display: inline-block;
-            background: rgba(23, 105, 170, 0.1);
-            color: var(--primary);
+
+        .quick-card-text {{ color: var(--text-secondary); font-size: {t.size_sm}px; }}
+
+        .recent-analysis-card {{
+            padding: 16px 18px;
+            background: linear-gradient(135deg, rgba(23, 105, 170, 0.08), rgba(15, 139, 141, 0.06));
+            border: 1px solid rgba(23, 105, 170, 0.14);
+            border-radius: {c.border_radius_lg};
+            margin-top: 16px;
+        }}
+
+        .status-indicator {{
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
             border-radius: 999px;
-            padding: {s.xs}px {s.md}px;
-            font-size: {t.size_xs}px;
-            font-weight: {t.weight_medium};
-            margin: {s.xs}px {s.xs}px 0 0;
-            border: 1px solid rgba(23, 105, 170, 0.2);
-        }}
-        
-        .polarity-positive {{ background: rgba(46, 139, 87, 0.1); color: var(--success); border-color: var(--success); }}
-        .polarity-negative {{ background: rgba(199, 62, 58, 0.1); color: var(--danger); border-color: var(--danger); }}
-        .polarity-uncertain {{ background: rgba(217, 144, 0, 0.1); color: var(--warning); border-color: var(--warning); }}
-        
-        /* Divider */
-        .stDivider {{ border-color: var(--border); opacity: 0.6; }}
-        
-        /* Data table */
-        .stDataFrame {{
             border: 1px solid var(--border);
-            border-radius: {c.border_radius_md};
-            overflow: hidden;
+            background: var(--bg-tertiary);
+            font-size: {t.size_sm}px;
+            font-weight: {t.weight_semibold};
+            margin: 8px 0 14px 0;
         }}
-        
-        /* Empty state */
+
+        .status-indicator.ready {{ color: var(--primary); }}
+        .status-indicator.running {{ color: var(--warning); }}
+        .status-indicator.complete {{ color: var(--success); }}
+
+        .pipeline-progress {{
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 10px;
+            margin: 8px 0 18px 0;
+        }}
+
+        .pipeline-step {{
+            padding: 12px 14px;
+            border-radius: {c.border_radius_md};
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }}
+
+        .pipeline-step-label {{
+            font-size: {t.size_xs}px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }}
+
+        .pipeline-step-text {{ font-size: {t.size_sm}px; font-weight: {t.weight_semibold}; }}
+        .pipeline-step.complete {{ border-color: rgba(46, 139, 87, 0.28); background: rgba(46, 139, 87, 0.08); }}
+        .pipeline-step.active {{ border-color: rgba(217, 144, 0, 0.28); background: rgba(217, 144, 0, 0.08); }}
+        .pipeline-step.pending {{ opacity: 0.75; }}
+
+        .evidence-card, .gap-card, .hypothesis-card {{ padding: 18px 20px; margin-bottom: 12px; }}
+        .evidence-card-header, .gap-card-header, .hypothesis-card-header {{
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }}
+
+        .evidence-card-title, .gap-card-title, .hypothesis-card-title {{
+            font-size: {t.size_lg}px;
+            font-weight: {t.weight_semibold};
+            color: var(--text-primary);
+        }}
+
+        .evidence-card-text, .gap-card-text, .hypothesis-card-text {{
+            color: var(--text-secondary);
+            font-size: {t.size_sm}px;
+            line-height: {t.line_height_normal};
+        }}
+
+        .badge-row {{ display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }}
+
+        .evidence-pill {{
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 4px 10px;
+            margin: 2px 6px 4px 0;
+            font-size: {t.size_xs}px;
+            font-weight: {t.weight_semibold};
+            color: var(--primary);
+            background: rgba(23, 105, 170, 0.10);
+            border: 1px solid rgba(23, 105, 170, 0.20);
+        }}
+
+        .soft-badge {{
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: {t.size_xs}px;
+            font-weight: {t.weight_semibold};
+            border: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }}
+
+        .gap-card {{ border-left: 4px solid var(--accent); }}
+        .hypothesis-card {{ border-left: 4px solid var(--primary); }}
+
+        .score-block {{ margin: 6px 0; }}
+        .score-block .score-label {{ font-size: {t.size_xs}px; color: var(--text-secondary); }}
+        .score-block .score-bar {{ font-family: monospace; color: var(--primary); letter-spacing: 1px; }}
+
         .empty-state {{
             text-align: center;
-            padding: {s.xxxl}px {s.lg}px;
+            padding: 48px 24px;
             background: var(--bg-tertiary);
             border-radius: {c.border_radius_lg};
             border: 1px dashed var(--border);
         }}
-        
-        .empty-state-icon {{
-            font-size: {t.size_2xl}px;
-            margin-bottom: {s.md}px;
-            opacity: 0.6;
+
+        .stAlert, [data-testid="metric-container"], .stDataFrame {{
+            border-radius: {c.border_radius_md};
         }}
-        
-        .empty-state-title {{
-            font-size: {t.size_lg}px;
-            font-weight: {t.weight_semibold};
-            color: var(--text-primary);
-            margin-bottom: {s.sm}px;
-        }}
-        
-        .empty-state-text {{
+
+        .stExpander {{ border: 1px solid var(--border); border-radius: {c.border_radius_md}; overflow: hidden; }}
+        .stTabs [data-baseweb="tab"] {{ color: var(--text-secondary); font-weight: {t.weight_medium}; }}
+        .stTabs [aria-selected="true"] {{ color: var(--primary); border-bottom-color: var(--primary); }}
+
+        .sidebar-corpus-summary {{
+            margin-top: 16px;
+            padding: 14px;
+            border-radius: {c.border_radius_md};
+            border: 1px solid var(--border);
+            background: var(--bg-tertiary);
             font-size: {t.size_sm}px;
             color: var(--text-secondary);
-            max-width: 400px;
-            margin: 0 auto;
-            line-height: {t.line_height_relaxed};
         }}
-        
-        /* Expander */
-        .streamlit-expanderHeader {{
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: {c.border_radius_md};
-            font-weight: {t.weight_medium};
-        }}
-        
-        .streamlit-expanderHeader:hover {{
-            background: #FFFBF0;
-        }}
-        
-        /* Success/Warning/Error messages */
-        .stAlert {{
-            border-radius: {c.border_radius_md};
-            border-left: 4px solid var(--primary);
-        }}
-        
-        .stSuccess {{ border-left-color: var(--success); }}
-        .stWarning {{ border-left-color: var(--warning); }}
-        .stError {{ border-left-color: var(--danger); }}
-        
-        /* Tabs */
-        .stTabs [data-baseweb="tab"] {{
-            border-bottom: 2px solid transparent;
-            color: var(--text-secondary);
-            font-weight: {t.weight_medium};
-            transition: {c.transition_fast};
-        }}
-        
-        .stTabs [aria-selected="true"] {{
-            border-bottom-color: var(--primary);
-            color: var(--primary);
-        }}
-        
-        /* Slider */
-        .stSlider > div > div > div > div {{
-            color: var(--primary);
-        }}
-        
-        /* Metric */
-        [data-testid="metric-container"] {{
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: {c.border_radius_lg};
-            padding: {s.md}px;
-        }}
-        
-        /* Global text utilities */
-        .text-muted {{ color: var(--text-secondary); }}
-        .text-accent {{ color: var(--accent); }}
-        .font-mono {{ font-family: 'Monaco', 'Courier New', monospace; }}
-        
-        /* Layout utilities */
-        .flex-center {{ display: flex; align-items: center; justify-content: center; }}
-        .gap-sm {{ gap: {s.sm}px; }}
-        .gap-md {{ gap: {s.md}px; }}
-        .gap-lg {{ gap: {s.lg}px; }}
+
+        .sidebar-divider {{ margin: 18px 0 12px 0; border-top: 1px solid var(--border); }}
+
+        a {{ color: var(--primary); text-decoration: none; }}
+        a:hover {{ text-decoration: underline; }}
     </style>
     """
 
+
+def get_light_theme_css() -> str:
+    """Generate complete light-mode CSS."""
+    return _theme_css(dark=False)
+
+
 def get_dark_theme_css() -> str:
     """Generate complete dark-mode CSS."""
-    p = light_palette
-    t = typography
-    s = spacing
-    c = components
-    
+    return _theme_css(dark=True)
+
+
+def get_page_header_html(title: str, subtitle: str, corpus_info: Optional[str] = None) -> str:
+    corpus_html = ""
+    if corpus_info:
+        corpus_html = (
+            f'<div class="page-header-corpus">🧪 {escape_html(corpus_info)}</div>'
+        )
     return f"""
-    <style>
-        :root {{
-            --bg-primary: {p.bg_dark};
-            --bg-secondary: {p.bg_dark_secondary};
-            --bg-tertiary: #1F2937;
-            --text-primary: {p.text_light};
-            --text-secondary: #9CA3AF;
-            --primary: {p.primary_light};
-            --primary-dark: {p.primary_dark};
-            --secondary: {p.secondary_light};
-            --accent: {p.accent_light};
-            --success: {p.success_light};
-            --warning: {p.warning_light};
-            --danger: {p.danger_light};
-            --border: {p.border_dark};
-            --muted: #6B7280;
-        }}
-        
-        body, .stApp {{
-            font-family: {t.font_family};
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-size: {t.size_base}px;
-            line-height: {t.line_height_normal};
-        }}
-        
-        .block-container {{ padding-top: {s.lg}px; padding-bottom: {s.xl}px; }}
-        
-        /* Headings */
-        h1, h2, h3 {{ color: var(--text-primary); }}
-        
-        /* Inputs */
-        .stTextInput > div > div > input,
-        .stTextArea > div > div > textarea {{
-            background-color: {p.bg_dark_secondary};
-            color: var(--text-light);
-            border-color: {p.border_dark};
-        }}
-        
-        /* Sidebar */
-        section[data-testid="stSidebar"] {{
-            background-color: {p.bg_dark_secondary};
-            border-right-color: {p.border_dark};
-        }}
-        
-        /* Cards */
-        .metric-card {{
-            background: {p.bg_dark_secondary};
-            border-color: {p.border_dark};
-        }}
-        
-        .stAlert {{
-            background-color: rgba(0, 0, 0, 0.3);
-            color: var(--text-light);
-        }}
-    </style>
+    <div class="page-header">
+        <div class="page-header-title">{escape_html(title)}</div>
+        <div class="page-header-subtitle">{escape_html(subtitle)}</div>
+        {corpus_html}
+    </div>
     """
+
+
+def get_score_bar_html(label: str, score: float, show_level: bool = True) -> str:
+    score = max(0.0, min(1.0, float(score or 0.0)))
+    filled = round(score * 10)
+    empty = 10 - filled
+    bar = "█" * filled + "░" * empty
+    level = "HIGH" if score >= 0.7 else "MODERATE" if score >= 0.4 else "LOW"
+    color = "#2E8B57" if score >= 0.7 else "#D99000" if score >= 0.4 else "#C73E3A"
+    level_html = f'<span style="font-size:11px;color:{color};font-weight:600;">{level}</span>' if show_level else ""
+    return f'''<div style="margin:6px 0;">
+        <span style="font-size:12px;color:var(--text-secondary);">{escape_html(label)}</span><br>
+        <span style="font-family:monospace;color:var(--primary);letter-spacing:1px;">{bar}</span>
+        <span style="font-size:13px;color:var(--text-primary);margin-left:8px;">{score:.2f}</span>
+        {level_html}
+    </div>'''
+
+
+def get_empty_state_html(icon: str, title: str, message: str, action: str = "") -> str:
+    action_html = f'<div style="margin-top:12px;font-size:13px;color:var(--primary);">{escape_html(action)}</div>' if action else ""
+    return f'''<div style="text-align:center;padding:48px 24px;background:var(--bg-tertiary);
+               border-radius:12px;border:1px dashed var(--border);">
+        <div style="font-size:32px;margin-bottom:12px;opacity:0.6;">{escape_html(icon)}</div>
+        <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">{escape_html(title)}</div>
+        <div style="font-size:13px;color:var(--text-secondary);max-width:400px;margin:0 auto;">{escape_html(message)}</div>
+        {action_html}
+    </div>'''
+
+
+def get_polarity_badge_html(polarity: str) -> str:
+    polarity = (polarity or "uncertain").lower()
+    config = {
+        "positive": ("#2E8B57", "rgba(46,139,87,0.1)", "POSITIVE"),
+        "negative": ("#C73E3A", "rgba(199,62,58,0.1)", "NEGATIVE"),
+        "uncertain": ("#D99000", "rgba(217,144,0,0.1)", "UNCERTAIN"),
+        "speculative": ("#6C63FF", "rgba(108,99,255,0.1)", "SPECULATIVE"),
+    }.get(polarity, ("#53657A", "rgba(83,101,122,0.1)", polarity.upper()))
+    color, bg, label = config
+    return f'<span style="background:{bg};color:{color};border:1px solid {color};border-radius:999px;padding:2px 10px;font-size:11px;font-weight:600;">{escape_html(label)}</span>'
+
+
+def get_evidence_card_html(subject, predicate, obj, sentence, pmid, year, confidence, polarity) -> str:
+    conf_str = f"{float(confidence):.2f}" if confidence is not None else "N/A"
+    year_str = str(year) if year else "N/A"
+    pmid_str = str(pmid) if pmid else "N/A"
+    polarity_html = get_polarity_badge_html(str(polarity or "uncertain"))
+    return f'''<div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin:8px 0;transition:box-shadow 0.15s;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span style="font-weight:600;color:var(--text-primary);">{escape_html(str(subject or 'N/A'))}</span>
+                <span style="color:#0F8B8D;font-size:12px;background:rgba(15,139,141,0.1);padding:2px 8px;border-radius:4px;">{escape_html(str(predicate or 'related_to'))}</span>
+                <span style="font-weight:600;color:var(--text-primary);">{escape_html(str(obj or 'N/A'))}</span>
+            </div>
+            {polarity_html}
+        </div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:10px;line-height:1.6;">{escape_html(str(sentence or 'No evidence sentence available.'))}</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+            <span style="font-size:11px;background:rgba(23,105,170,0.1);color:#1769AA;padding:2px 8px;border-radius:999px;">PMID {escape_html(pmid_str)}</span>
+            <span style="font-size:11px;color:var(--text-secondary);">{escape_html(year_str)}</span>
+            <span style="font-size:11px;color:var(--text-secondary);">Confidence: {escape_html(conf_str)}</span>
+        </div>
+    </div>'''
